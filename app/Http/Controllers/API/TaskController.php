@@ -26,7 +26,7 @@ class TaskController extends Controller
 
         // * /api/task?id=1 *
         if($id) {
-            $task = $taskQuery->find($id);
+            $task = $taskQuery->with(['user'])->find($id);
 
             if($task) {
                 return ResponseFormatter::success($task);
@@ -66,8 +66,8 @@ class TaskController extends Controller
                 'assign_by' => $request->assign_by,
                 'user_id' => $request->user_id,
                 'status' => $request->status,
-                'task_start' => $request->status,
-                'task_complete' => $request->status,
+                'task_start' => $request->task_start,
+                'task_complete' => $request->task_complete,
             ]);
 
             if(!$task) {
@@ -77,6 +77,22 @@ class TaskController extends Controller
             return ResponseFormatter::success($task, 'Task Created');
         } catch (Exception $e) {
             return ResponseFormatter::error('Failed Create Task', 500);
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $task = Task::find($id);
+
+            if(!$task) {
+                throw new Exception('Task Not Found');
+            }
+
+            
+            return ResponseFormatter::success($task);
+        } catch (Exception $e) {
+            return ResponseFormatter::error('Cant Edit Task Data', 500);
         }
     }
 
@@ -95,9 +111,10 @@ class TaskController extends Controller
                 'title' => $request->title,
                 'description' => $request->description,
                 'due_date' => $request->due_date,
-                'assign_by' => Auth::user()->name,
-                'user_id' => Auth::user()->id,
+                'assign_by' => $request->assign_by,
+                'user_id' => $request->user_id,
                 'status' => $request->status,
+                // 'task_start' => $request->task_start,
                 'task_start' => Carbon::now()->format('Y-m-d H:i:s'),
                 'task_complete' => $request->task_complete,
             ]);

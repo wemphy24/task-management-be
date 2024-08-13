@@ -60,5 +60,6 @@ Route::prefix('role')->middleware('auth:sanctum')->name('role.')->group(function
 Route::prefix('task')->middleware('auth:sanctum')->name('task.')->group(function () {
     Route::get('', [TaskController::class, 'fetch'])->name('fetch');
     Route::post('', [TaskController::class, 'create'])->name('create');
-    Route::post('update/{id}', [TaskController::class, 'update'])->name('update');
+    Route::get('edit/{id}', [TaskController::class, 'edit'])->name('edit');
+    Route::put('update/{id}', [TaskController::class, 'update'])->name('update');
 });
